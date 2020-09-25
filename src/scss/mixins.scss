@@ -1,0 +1,14 @@
+@mixin button {
+	text-decoration: none;
+	text-transform: uppercase;
+	color: #fff;
+	border: 0;
+	box-sizing: border-box;
+	outline: none;
+	cursor: pointer;
+	transition: .3s;
+
+	&:hover {
+		transform: scale(1.05);
+	}
+}
