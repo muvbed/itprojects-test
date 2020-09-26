@@ -55,7 +55,7 @@
 
 		<!-- Модальное окно редактирования поля контакта -->
 		<div class="modal" ref="modalEdit">
-			<div class="modal__wrapper" @click.self="closeModal('edit')">
+			<div class="modal__wrapper" @click.self="openModal('confirm')">
 				<div class="modal__box">
 					<h2 class="modal__title">Edit field "{{ fieldToEdit.key }}"</h2>
 					<p class="modal__text">Edit value in the fields below:</p>
@@ -67,22 +67,22 @@
 						</label>
 					</div>
 					<div class="modal__btns">
-						<button class="modal__button modal__button_red" @click="editField">Edit</button>
-						<button class="modal__button modal__button_gray" @click="closeModal('edit')">Cancel</button>
+						<button class="modal__button modal__button_green" @click="editField">Edit</button>
+						<button class="modal__button modal__button_gray" @click="openModal('confirm')">Cancel</button>
 					</div>
-					<span class="modal__close" @click="closeModal('edit')">&times;</span>
+					<span class="modal__close" @click="openModal('confirm')">&times;</span>
 				</div>
 			</div>
 		</div>
 
-		<!-- Модальное окно подтверждения внесенных изменений в поле контакта -->
+		<!-- Модальное окно подтверждения отмены процесса редактирования -->
 		<div class="modal" ref="modalConfirm">
 			<div class="modal__wrapper" @click.self="closeModal('confirm')">
 				<div class="modal__box">
 					<h2 class="modal__title">Confirm your actions</h2>
-					<p class="modal__text">Are you sure you want to confirm the changes?</p>
+					<p class="modal__text">Are you sure you want to undo editing?</p>
 					<div class="modal__btns">
-						<button class="modal__button modal__button_red" @click="confirmEdit">Confirm</button>
+						<button class="modal__button modal__button_red" @click="confirmCancelEdit">Confirm</button>
 						<button class="modal__button modal__button_gray" @click="closeModal('confirm')">Cancel</button>
 					</div>
 					<span class="modal__close" @click="closeModal('confirm')">&times;</span>
@@ -205,7 +205,7 @@ export default {
 				document.querySelector("#addName").value = document.querySelector("#addValue").value = ''
 			}
 		},
-		editField() { // Проверка внесенных изменений в поле контакта
+		editField() { // Процесс редактирование поля контакта
 			let errCount = 0
 
 			for (let i = 0; i < document.querySelectorAll('.modal__label_edit').length; i++) {
@@ -218,14 +218,15 @@ export default {
 			}
 
 			if (errCount === 0) {
-				this.openModal('confirm')
+				this.step++
+				this.localeItem[this.step] = {...this.localeItem[this.step - 1]}
+				this.localeItem[this.step][this.fieldToEdit.key] = document.querySelector("#editValue").value
+				this.commitUpdItem([this.id, this.localeItem[this.step]])
+				this.closeModal('edit')
+				document.querySelector("#editValue").value = ''
 			}
 		},
-		confirmEdit() { // Подтверждение внесенных изменений в поле контакта
-			this.step++
-			this.localeItem[this.step] = {...this.localeItem[this.step - 1]}
-			this.localeItem[this.step][this.fieldToEdit.key] = document.querySelector("#editValue").value
-			this.commitUpdItem([this.id, this.localeItem[this.step]])
+		confirmCancelEdit() { // Подтверждение отмены процесса редактирования
 			this.closeModal('confirm')
 			this.closeModal('edit')
 			document.querySelector("#editValue").value = ''
