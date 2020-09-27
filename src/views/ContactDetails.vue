@@ -19,10 +19,10 @@
 				</div>
 				<div class="contactField__control">
 					<span class="contactField__button contactField__button_edit" @click="openModal('edit', {value, key})">
-						<img src="@/assets/svg/edit.svg" alt="Edit">
+						<i class="material-icons">edit</i>
 					</span>
 					<span class="contactField__button contactField__button_del" @click="openModal('del', key)" v-if="key != 'name' && key != 'phone'">
-						<img src="@/assets/svg/del.svg" alt="Delete">
+						<i class="material-icons">cancel</i>
 					</span>
 				</div>
 			</li>
@@ -321,6 +321,7 @@ export default {
 
 		&_del {
 			margin-left: 10px;
+			color: $red;
 		}
 	}
 }
