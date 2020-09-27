@@ -1,25 +1,25 @@
 <template>
-	<div class="wrapper contacts">
+	<div class="wrapper contactsList">
 		<h1 class="caption">Contacts list</h1>
 
 		<!-- Триггер вызова модального окна добавления новых контактов -->
-		<button class="contacts__add" @click="openModal('add')">Add new contact</button>
+		<button class="contactsList__add" @click="openModal('add')">Add new contact</button>
 
 		<!-- Вывод списка контактов -->
-		<ul class="contacts__list" v-if="getAllItems.length != 0">
-			<li class="contacts-item" v-for="(item, index) in getAllItems" :key="index">
-				<h2 class="contacts-item__name">{{ item.name }}</h2>
-				<a :href="`tel:${$options.filters.phoneDecoder(item.phone)}`" class="contacts-item__phone">{{ item.phone }}</a>
-				<div class="contacts-item__btns">
-					<router-link :to="`/id${index}`" class="contacts-item__button contacts-item__button_link">Details</router-link>
-					<button class="contacts-item__button contacts-item__button_del" @click="openModal('del', [index, item.name])">Delete</button>
+		<ul class="contactsList__list" v-if="contacts.length != 0">
+			<li class="contactItem" v-for="({name, phone}, index) in contacts" :key="index">
+				<h2 class="contactItem__name">{{ name }}</h2>
+				<a :href="`tel:${$options.filters.phoneDecoder(phone)}`" class="contactItem__phone">{{ phone }}</a>
+				<div class="contactItem__btns">
+					<router-link :to="`/index${index}`" class="contactItem__button contactItem__button_link">Details</router-link>
+					<button class="contactItem__button contactItem__button_del" @click="openModal('del', [index, name])">Delete</button>
 				</div>
-				<hr class="contacts-item__border">
+				<hr class="contactItem__border">
 			</li>
 		</ul>
 
 		<!-- Вывод сообщения в случае пустого списка контактов -->
-		<div class="contacts__empty" v-else>Your contacts list is empty</div>
+		<div class="contactsList__empty" v-else>Your contacts list is empty</div>
 
 		<!-- Модальное окно добавления нового контакта -->
 		<div class="modal" ref="modalAdd">
@@ -65,16 +65,16 @@
 
 <script>
 import { TheMask } from 'vue-the-mask'
-import { mapGetters, mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
-	name: 'contacts',
+	name: 'ContactsList',
 	components: {
 		TheMask
 	},
 	data() {
 		return {
-			id: 0,
+			index: 0,
 			contactsDelName: '',
 			unmaskedPhoneVal: ''
 		}
@@ -85,9 +85,11 @@ export default {
 			return phone.replace(/-|\)|\(|\s/gi, '')
 		}
 	},
-	computed: mapGetters(["getAllItems"]),
+	computed: mapState({
+		contacts: state => state.contacts.contacts
+	}),
 	methods: {
-		...mapActions(["commitAddItem", "commitDelItem"]),
+		...mapActions(["addContact", "delContact"]),
 		openModal(type, prop) { // Открытие модального окна (type - тип модального окна; prop - дополнительные параметры)
 			document.body.style.paddingRight = window.innerWidth - document.body.clientWidth + "px"
 			document.body.style.overflow = 'hidden'
@@ -97,7 +99,7 @@ export default {
 			}
 
 			if (type === 'del') {
-				this.id = prop[0]
+				this.index = prop[0]
 				this.contactsDelName = prop[1]
 				this.$refs.modalDel.classList.add('modal_show')
 			}
@@ -133,7 +135,7 @@ export default {
 			}
 
 			if (errCount === 0) {
-				this.commitAddItem({
+				this.addContact({
 					name: document.querySelector("#addName").value,
 					phone: document.querySelector("#addPhone").value
 				})
@@ -142,18 +144,16 @@ export default {
 				document.querySelector("#addName").value = this.unmaskedPhoneVal = ''
 			}
 		},
-		delItem() { // Удаление контакта по идентификатору (id) из списка контактов
-			this.commitDelItem(this.id)
+		delItem() { // Удаление контакта по индексу (index) из списка контактов
+			this.delContact(this.index)
 			this.closeModal('del')
 		}
 	}
 }
 </script>
 
-<style lang="scss">
-@import '@/scss/mixins.scss';
-
-.contacts {
+<style lang="scss" scoped>
+.contactsList {
 	&__add {
 		@include button;
 		display: block;
@@ -161,7 +161,7 @@ export default {
 		margin: 20px auto;
 		padding: 14px 5px;
 		font-size: 14px;
-		background-color: rgb(50,205,50);
+		background-color: $green;
 		border-radius: 30px;
 	}
 
@@ -182,7 +182,7 @@ export default {
 	}
 }
 
-.contacts-item {
+.contactItem {
 	margin-bottom: 20px;
 	text-align: center;
 
@@ -203,8 +203,8 @@ export default {
 		transition: .3s;
 
 		&:hover {
-			color: rgba(37,116,169,1);
-			border-bottom: 1px dashed rgba(37,116,169,1);
+			color: $light-blue;
+			border-bottom: 1px dashed $light-blue;
 		}
 	}
 
@@ -222,11 +222,11 @@ export default {
 		border-radius: 25px;
 
 		&_link {
-			background-color: rgb(169,169,169);
+			background-color: $gray;
 		}
 
 		&_del {
-			background-color: rgb(139,0,0);
+			background-color: $red;
 		}
 	}
 

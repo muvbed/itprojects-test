@@ -8,11 +8,11 @@ export default new VueRouter({
 	routes: [
 		{
 			path: '/', 
-			component: () => import('@/views/contacts.vue')
+			component: () => import('@/views/ContactsList.vue')
 		},
 		{
-			path: '/id:id',
-			component: () => import('@/views/item.vue')
+			path: '/index:id',
+			component: () => import('@/views/ContactDetails.vue')
 		}
 	]
 })

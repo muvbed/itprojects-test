@@ -1,4 +1,5 @@
-@import '@/scss/mixins.scss';
+@import '@/assets/styles/helpers/normalize';
+@import '@/assets/styles/helpers/fonts.scss';
 
 body {
 	margin: 0;
@@ -63,8 +64,8 @@ body {
 	&__label {
 		&_error {
 			.modal__input {
-				color: rgb(139,0,0);
-				border-bottom: 1px solid rgb(139,0,0);
+				color: $red;
+				border-bottom: 1px solid $red;
 			}
 
 			.modal__error {
@@ -91,7 +92,7 @@ body {
 		margin-bottom: 15px;
 		text-align: left;
 		font-size: 14px;
-		color: rgb(139,0,0);
+		color: $red;
 		opacity: 0;
 		visibility: hidden;
 	}
@@ -110,15 +111,15 @@ body {
 		border-radius: 25px;
 
 		&_green {
-			background-color: rgb(50,205,50);
+			background-color: $green;
 		}
 
 		&_red {
-			background-color: rgb(139,0,0);
+			background-color: $red;
 		}
 
 		&_gray {
-			background-color: rgb(169,169,169);
+			background-color: $gray;
 		}
 	}
 
@@ -133,7 +134,7 @@ body {
 		transition: .3s;
 
 		&:hover {
-			color: rgb(139,0,0);
+			color: $red;
 			transform: scale(1.2);
 		}
 	}

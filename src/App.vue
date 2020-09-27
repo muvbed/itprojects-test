@@ -6,12 +6,10 @@
 
 <script>
 export default {
-	name: 'app'
+	name: 'App'
 }
 </script>
 
 <style lang="scss">
-@import 'scss/normalize.css';
-@import 'scss/fonts.scss';
-@import 'scss/general.scss';
+@import '@/assets/styles/general.scss';
 </style>

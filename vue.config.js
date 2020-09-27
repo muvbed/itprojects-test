@@ -27,6 +27,13 @@ module.exports = {
 			]),
 		]
 	},
+	css: {
+		loaderOptions: {
+			scss: {
+				prependData: `@import "@/assets/styles/helpers/variables.scss";`
+			}
+		}
+	},
 	chainWebpack: config => {
 		config.module
 		.rule('cursor')

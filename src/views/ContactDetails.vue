@@ -1,28 +1,28 @@
 <template>
-	<div class="wrapper item">
-		<h1 class="caption">Detail information</h1>
-		<div class="item__control">
+	<div class="wrapper contactDetails">
+		<h1 class="caption">Contact details</h1>
+		<div class="contactDetails__control">
 
 			<!-- Триггер вызова модального окна добавления новых полей -->
-			<button class="item__button item__button_add" @click="openModal('add')">Add field</button>
+			<button class="contactDetails__button contactDetails__button_add" @click="openModal('add')">Add field</button>
 
 			<!-- Триггер вызова метода отмены последних внесенных изменений -->
-			<button :class="{item__button_disable: step === 0, item__button_rllbck: step > 0}" class="item__button" @click="backStep">Roll back</button>
+			<button :class="{contactDetails__button_disable: step === 0, contactDetails__button_rllbck: step > 0}" class="contactDetails__button" @click="backStep">Roll back</button>
 		</div>
 
 		<!-- Вывод полей контакта -->
-		<ul class="item__list">
-			<li class="item-block" v-for="(value, key, index) in localeItem[step]" :key="index">
-				<div class="item-block__text">
-					<span class="item-block__key">{{ key }}: </span>
-					<span class="item-block__value">{{ value }}</span>
+		<ul class="contactDetails__list">
+			<li class="contactField" v-for="(value, key, index) in localeItem[step]" :key="index">
+				<div class="contactField__text">
+					<span class="contactField__key">{{ key }}: </span>
+					<span class="contactField__value">{{ value }}</span>
 				</div>
-				<div class="item-block__control">
-					<span class="item-block__button item-block__button_edit"  @click="openModal('edit', {value, key})">
-						<img src="@/svg/edit.svg" alt="Edit">
+				<div class="contactField__control">
+					<span class="contactField__button contactField__button_edit" @click="openModal('edit', {value, key})">
+						<img src="@/assets/svg/edit.svg" alt="Edit">
 					</span>
-					<span class="item-block__button item-block__button_del" @click="openModal('del', key)" v-if="key != 'name' && key != 'phone'">
-						<img src="@/svg/del.svg" alt="Delete">
+					<span class="contactField__button contactField__button_del" @click="openModal('del', key)" v-if="key != 'name' && key != 'phone'">
+						<img src="@/assets/svg/del.svg" alt="Delete">
 					</span>
 				</div>
 			</li>
@@ -94,10 +94,10 @@
 		<div class="modal" ref="modalDel">
 			<div class="modal__wrapper" @click.self="closeModal('del')">
 				<div class="modal__box">
-					<h2 class="modal__title">Delete "{{ fieldsDelName }}"?</h2>
+					<h2 class="modal__title">Delete "{{ fieldDelName }}"?</h2>
 					<p class="modal__text">Are you sure you want to confirm the delete this field?</p>
 					<div class="modal__btns">
-						<button class="modal__button modal__button_red" @click="delField(fieldsDelName)">Delete</button>
+						<button class="modal__button modal__button_red" @click="delField(fieldDelName)">Delete</button>
 						<button class="modal__button modal__button_gray" @click="closeModal('del')">Cancel</button>
 					</div>
 					<span class="modal__close" @click="closeModal('del')">&times;</span>
@@ -109,10 +109,10 @@
 
 <script>
 import { TheMask } from 'vue-the-mask'
-import { mapGetters, mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
-	name: 'item',
+	name: 'ContactDetails',
 	components: {
 		TheMask
 	},
@@ -120,17 +120,19 @@ export default {
 		return {
 			step: 0,
 			localeItem: [],
-			id: window.location.hash.split('id')[1], // Получение идентификатора контакта
-			fieldsDelName: '',
+			index: window.location.hash.split('index')[1], // Получение индекса контакта
+			fieldDelName: '',
 			fieldToEdit: {
 				value: '',
 				key: ''
 			}
 		}
 	},
-	computed: mapGetters(["getAllItems"]),
+	computed: mapState({
+		contacts: state => state.contacts.contacts
+	}),
 	methods: {
-		...mapActions(["commitUpdItem"]),
+		...mapActions(["updContact"]),
 		openModal(type, prop) { // Открытие модального окна (type - тип модального окна; prop - дополнительные параметры)
 			document.body.style.paddingRight = window.innerWidth - document.body.clientWidth + "px"
 			document.body.style.overflow = 'hidden'
@@ -145,7 +147,7 @@ export default {
 			}
 
 			if (type === 'del') {
-				this.fieldsDelName = prop
+				this.fieldDelName = prop
 				this.$refs.modalDel.classList.add('modal_show')
 			}
 
@@ -177,7 +179,7 @@ export default {
 		backStep() { // Отмена последнего внесенного изменения (шаг назад)
 			if (this.step === 0) return
 			this.step--
-			this.commitUpdItem([this.id, this.localeItem[this.step]])
+			this.updContact([this.index, this.localeItem[this.step]])
 		},
 		addField() { // Добавление нового поля в контакт
 			let errCount = 0
@@ -200,7 +202,7 @@ export default {
 				this.step++
 				this.localeItem[this.step] = {...this.localeItem[this.step - 1]}
 				this.localeItem[this.step][document.querySelector("#addName").value] = document.querySelector("#addValue").value
-				this.commitUpdItem([this.id, this.localeItem[this.step]])
+				this.updContact([this.index, this.localeItem[this.step]])
 				this.closeModal('add')
 				document.querySelector("#addName").value = document.querySelector("#addValue").value = ''
 			}
@@ -221,7 +223,7 @@ export default {
 				this.step++
 				this.localeItem[this.step] = {...this.localeItem[this.step - 1]}
 				this.localeItem[this.step][this.fieldToEdit.key] = document.querySelector("#editValue").value
-				this.commitUpdItem([this.id, this.localeItem[this.step]])
+				this.updContact([this.index, this.localeItem[this.step]])
 				this.closeModal('edit')
 				document.querySelector("#editValue").value = ''
 			}
@@ -235,21 +237,19 @@ export default {
 			this.step++
 			this.localeItem[this.step] = {...this.localeItem[this.step - 1]}
 			delete this.localeItem[this.step][field]
-			this.commitUpdItem([this.id, this.localeItem[this.step]])
+			this.updContact([this.index, this.localeItem[this.step]])
 			this.closeModal('del')
 		}
 	},
 	created() {
-		this.localeItem.push({...this.getAllItems[this.id]}) // Копирование контакта по идентификатору из списка контактов в локальную переменную 
-															// для реализации истории внесенных изменений
+		this.localeItem.push({...this.contacts[this.index]}) // Копирование контакта по индексу из списка контактов в локальную переменную 
+																	// для реализации истории внесенных изменений
 	}
 }
 </script>
 
 <style lang="scss">
-@import '@/scss/mixins.scss';
-
-.item {
+.contactDetails {
 	&__control {
 		display: flex;
 		justify-content: center;
@@ -265,11 +265,11 @@ export default {
 		border-radius: 30px;
 
 		&_add {
-			background-color: rgb(50,205,50);
+			background-color: $green;
 		}
 
 		&_rllbck {
-			background-color: rgb(135,206,235);
+			background-color: $light-blue;
 		}
 
 		&_disable {
@@ -287,7 +287,7 @@ export default {
 	}
 }
 
-.item-block {
+.contactField {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
