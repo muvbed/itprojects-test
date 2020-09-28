@@ -18,8 +18,8 @@
 					<span class="contactField__value">{{ value }}</span>
 				</div>
 				<div class="contactField__control">
-					<i class="material-icons contactField__button contactField__button_edit" @click="modalsParams = {type: 'EditField', args: {localeItem, step, value, key, index}}">edit</i>
-					<i class="material-icons contactField__button contactField__button_del" @click="modalsParams = {type: 'DelField', args: {localeItem, step, key, index}}" v-if="key != 'name' && key != 'phone'">cancel</i>
+					<i class="material-icons contactField__button contactField__button_edit" @click="modalsParams = {type: 'EditField', args: {localeItem, step, value, key, contactIndex}}">edit</i>
+					<i class="material-icons contactField__button contactField__button_del" @click="modalsParams = {type: 'DelField', args: {localeItem, step, key, contactIndex}}" v-if="key != 'name' && key != 'phone'">cancel</i>
 				</div>
 			</li>
 		</ul>
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapState, mapActions } from "vuex"
 
 import ModalsWrapper from '@/components/ModalsWrapper'
 
@@ -58,6 +58,7 @@ export default {
 	},
 	computed: mapState({contacts: state => state.contacts.contacts}),
 	methods: {
+		...mapActions(["updContact"]),
 		backStep() { // Отмена последнего внесенного изменения (шаг назад)
 			if (this.step === 0) return
 			this.step--

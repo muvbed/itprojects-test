@@ -62,7 +62,7 @@ export default {
 				this.params.localeItem[this.params.step][this.params.key] = document.querySelector("#editValue").value
 				document.querySelector("#editValue").value = ''
 
-				this.updContact([this.params.index, this.params.localeItem[this.params.step]])
+				this.updContact([this.params.contactIndex, this.params.localeItem[this.params.step]])
 				this.$emit('close-edit-field', {localeItem: this.params.localeItem, step: this.params.step})
 			}
 		},

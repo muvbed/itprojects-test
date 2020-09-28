@@ -20,10 +20,10 @@ export default {
     },
     actions: {
         addContact({commit}, contact) {
-            commit('ADD_CONTACT', contact);
+            commit('ADD_CONTACT', contact)
         },
         delContact({commit}, index) {
-            commit('DEL_CONTACT', index);
+            commit('DEL_CONTACT', index)
         },
         updContact({commit}, args) {
             commit('UPD_CONTACT', args)

@@ -30,7 +30,7 @@ export default {
 			this.params.localeItem[this.params.step] = {...this.params.localeItem[this.params.step - 1]}
 			delete this.params.localeItem[this.params.step][this.params.key]
 			
-			this.updContact([this.params.index, this.params.localeItem[this.params.step]])
+			this.updContact([this.params.contactIndex, this.params.localeItem[this.params.step]])
 			this.$emit('close-del-field', {localeItem: this.params.localeItem, step: this.params.step})
 		},
 		closeKeyDown(e) {
